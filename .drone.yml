@@ -1,0 +1,10 @@
+pipeline:  
+ publish_server:
+    image: plugins/docker
+    repo: romsys/nat2vpn
+    secrets: [ docker_username, docker_password ]
+    tag:
+    - latest
+    - "${DRONE_TAG}"
+    when:
+      event: tag
