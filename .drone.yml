@@ -1,0 +1,18 @@
+pipeline:
+  build:
+    image: docker:dind
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - docker build -t romsys/nat2vpn:${DRONE_COMMIT_SHA:0:8} .
+
+  publish:
+    image: docker:dind
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - docker login -u $${REGISTRY_USER} -p $${REGISTRY_PASSWORD}
+      - docker push romsys/nat2vpn:${DRONE_COMMIT_SHA:0:8}
+      - docker tag romsys/nat2vpn:${DRONE_COMMIT_SHA:0:8} romsys/nat2vpn:stable
+      - docker push romsys/nat2vpn:latest
+    secrets: [ registry_user, registry_password ]
